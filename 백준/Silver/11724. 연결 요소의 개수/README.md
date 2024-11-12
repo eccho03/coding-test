@@ -1,5 +1,10 @@
 # [Silver II] 연결 요소의 개수 - 11724 
 
+- 반복문으로 여러 줄 입력받아야 할 때 `input()`으로 입력 받으면 시간 초과가 발생할 수 있음. -> `sys.stdin.readline()` 사용
+```Python
+u, v = map(int, sys.stdin.readline().split())
+```
+
 [문제 링크](https://www.acmicpc.net/problem/11724) 
 
 ### 성능 요약
