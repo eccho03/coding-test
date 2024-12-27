@@ -1,5 +1,12 @@
 # [Silver II] 알고리즘 수업 - 너비 우선 탐색 1 - 24444 
 
+order의 index를 파라미터로 넘겨주는 게 global 변수를 만드는 것보다 더 좋음
+queue에 넣을 때 index도 증가시키고 넣어주기
+start의 order도 처음에 넣어주기
+order의 크기를 동적으로 조정하는 것보다 맨처음에 0으로 초기화시키기
+
+시간 제한이 있고, input이 많을 때 모든 코드가 input이 아닌 sys.stdin으로 받는지 확인하기 (이것 때문에 시간초과 해결하는 데 오래 걸림)
+
 [문제 링크](https://www.acmicpc.net/problem/24444) 
 
 ### 성능 요약
