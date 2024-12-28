@@ -1,5 +1,7 @@
 # [Silver II] 섬의 개수 - 4963 
 
+h, w를 혼동하지 않도록 주의할 것
+
 [문제 링크](https://www.acmicpc.net/problem/4963) 
 
 ### 성능 요약
