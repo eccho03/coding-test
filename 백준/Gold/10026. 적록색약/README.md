@@ -1,6 +1,6 @@
 # [Gold V] 적록색약 - 10026 
-color_graph = [i for i in graph] 하면 color_graph가 graph의 dfs 이후 변경사항을 반영함. (계속 포인팅)
-color_graph = [row[:] for row in graph]으로 단순 카피되도록 해줌.
+color_graph = [i for i in graph] 하면 color_graph가 graph의 dfs 이후 변경사항을 반영함. (shallow copy)
+color_graph = [row[:] for row in graph]으로 deep copy 해줌.
 
 [문제 링크](https://www.acmicpc.net/problem/10026) 
 
