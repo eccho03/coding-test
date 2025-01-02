@@ -1,5 +1,15 @@
 # [Silver IV] 듣보잡 - 1764 
 
+나머지 코드는 list를 사용해도 무방하나,
+두 개의 리스트에 공통으로 포함이 된 요소인지 확인할 때
+
+- list, tuple
+평균 : O(n)
+- set, dictionary
+평균 : O(1)
+
+이 점을 몰라서 시간 초과가 났다. 꼭 기억하기
+(a & b)
 [문제 링크](https://www.acmicpc.net/problem/1764) 
 
 ### 성능 요약
