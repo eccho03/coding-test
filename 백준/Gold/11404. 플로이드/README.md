@@ -2,6 +2,8 @@
 
 [문제 링크](https://www.acmicpc.net/problem/11404) 
 
+시작 도시와 도착 도시를 연결하는 노선은 하나가 아닐 수 있다. -> graph[a][b] = min(c, graph[a][b])   # 최소값 넣기 
+
 ### 성능 요약
 
 메모리: 33432 KB, 시간: 552 ms
