@@ -18,3 +18,7 @@ def solution(s):
         compressed += (str(word_cnt) + prev) if word_cnt > 1 else prev
         answer = min(answer, len(compressed))
     return answer if length > 1 else 1
+
+# while문보다는 for문을 떠올려보기 -> 범위가 어디서부터 어디일까를 먼저 고민
+# 길이가 1일 때 따로 고려
+# 전체를 계속 비교하는 것보다 prev를 두는 방법 사용
