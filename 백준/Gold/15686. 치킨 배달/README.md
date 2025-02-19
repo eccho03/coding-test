@@ -2,6 +2,10 @@
 
 [문제 링크](https://www.acmicpc.net/problem/15686) 
 
+- for k in combinations(chick, m) 이런식으로 작성하면 더 깔끔
+- i, j 좌표로 하는 것 대신 for hx, hy in range 이런식으로 작성하는 게 더 깔끔
+- city에 넣고 그중에 고르지 말고 한 번에 입력 받으면서 집인지 치킨집인지 판단하기
+
 ### 성능 요약
 
 메모리: 33432 KB, 시간: 684 ms
