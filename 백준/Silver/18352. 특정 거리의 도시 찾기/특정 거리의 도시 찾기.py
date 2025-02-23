@@ -1,32 +1,38 @@
-from collections import deque
 import sys
+from collections import deque
 
-def bfs(graph, start, dis, visited):
+def bfs(start, dis):
     queue = deque([(start, 0)])
+
     visited[start] = True
     result = []
 
     while queue:
-        cur, cur_dis = queue.popleft()
+        cur_node, cur_dis = queue.popleft()
 
         if cur_dis == dis:
-            result.append(cur)
+            result.append(cur_node)
             continue
-
-        for i in graph[cur]:
+        
+        for i in graph[cur_node]:
             if not visited[i]:
                 queue.append((i, cur_dis + 1))
                 visited[i] = True
     return sorted(result)
 
-n, m, k, x = map(int, sys.stdin.readline().rstrip().split())
+n, m, k, x = map(int, sys.stdin.readline().split())
+
 graph = [[] for _ in range(n + 1)]
-
-for _ in range(m):
-    node1, node2 = map(int, sys.stdin.readline().rstrip().split())
-    graph[node1].append(node2)
-
 visited = [False] * (n + 1)
-answer = bfs(graph, x, k, visited)
+distance = [0] * (n + 1)
+for _ in range(m):
+    a, b = map(int, sys.stdin.readline().split())
+    graph[a].append(b)
 
-print("\n".join(map(str, answer))) if answer else print("-1")
+answer = bfs(x, k)
+
+if len(answer) == 0:
+    print("-1")
+else:
+    for i in answer:
+        print(i)
