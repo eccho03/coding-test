@@ -1,35 +1,41 @@
+import sys
 from collections import deque
-
-def dfs(graph, v, visited):
-    visited[v] = True # 현재 노드 방문 처리
+def dfs(v):
+    visited[v] = True
     print(v, end=' ')
     for i in graph[v]:
         if not visited[i]:
-            dfs(graph, i, visited)
+            dfs(i)
 
-def bfs(graph, start, visited):
-    queue = deque([start])
-    visited[start] = True
+def bfs(v):
+    queue = deque([v])
+    visited[v] = True
+
     while queue:
-        v = queue.popleft()
-        print(v, end=' ')
-        for i in graph[v]:
+        node = queue.popleft()
+        print(node, end=' ')
+        for i in graph[node]:
+            
             if not visited[i]:
                 queue.append(i)
                 visited[i] = True
 
-n, m, v = map(int, input().split())
+n, m, v = map(int, sys.stdin.readline().split())
+
 graph = [[] for _ in range(n + 1)]
-for i in range(m):
-    node1, node2 = map(int, input().split())
-    graph[node1].append(node2)  
+visited = [False] * (n + 1)
+
+for _ in range(m):
+    node1, node2 = map(int, sys.stdin.readline().split())
+    graph[node1].append(node2)
     graph[node2].append(node1)
 
-for edges in graph:
-    edges.sort()
+for edge in graph:
+    edge.sort()
+    
+dfs(v)
 
 visited = [False] * (n + 1)
-dfs(graph, v, visited)
 print("")
-visited = [False] * (n + 1)
-bfs(graph, v, visited)
+
+bfs(v)
