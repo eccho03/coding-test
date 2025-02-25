@@ -2,6 +2,12 @@
 
 [문제 링크](https://www.acmicpc.net/problem/1697) 
 
+```Python
+if t[i] < 0 or t[i] >= len(distance):
+ continue
+```
+이부분 범위 체크 주의 t[i] > len(distance) 아님 !!
+
 ### 성능 요약
 
 메모리: 38336 KB, 시간: 116 ms
