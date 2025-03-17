@@ -1,52 +1,60 @@
-from copy import deepcopy
-from collections import deque
+type = [[], [1], [1, 3], [0, 1], [0, 1, 3], [0, 1, 2, 3]]
+dx = [-1, 0, 1, 0]
+dy = [0, 1, 0, -1]
 
-directions = {
-    1: [[(-1, 0)], [(1, 0)], [(0, -1)], [(0, 1)]],  # 한 방향
-    2: [[(-1, 0), (1, 0)], [(0, -1), (0, 1)]],  # 두 방향
-    3: [[(-1, 0), (0, 1)], [(-1, 0), (0, -1)], [(1, 0), (0, 1)], [(1, 0), (0, -1)]],  # 직각
-    4: [[(-1, 0), (0, -1), (0, 1)], [(-1, 0), (1, 0), (0, 1)], [(-1, 0), (1, 0), (0, -1)], [(1, 0), (0, -1), (0, 1)]],  # 3방향
-    5: [[(-1, 0), (1, 0), (0, -1), (0, 1)]]  # 4방향
-}
+def cal(tlst):
 
-n, m = map(int, input().split())
-cctvs = []
-space = []
+    visited = [[False] * m for _ in range(n)]
 
-for i in range(n):
-    row = list(map(int, input().split()))
-    for j in range(m):
-        if 1 <= row[j] <= 5:
-            cctvs.append((i, j, row[j]))
-    space.append(row)
+    for i in range(cnt):
+        sx, sy = cctv[i] # 현재 위치
+        rot = tlst[i] # 회전
+        ty = arr[sx][sy] # cctv 타입
 
-def check_area(tmp_space, x, y, dirs):
-    for dx, dy in dirs:
-        nx, ny = x, y
-        while True:
-            nx += dx
-            ny += dy
+        for dir in type[ty]:
+            ndir = (dir + rot) % 4
+            cx, cy = sx, sy
 
-            if not (0 <= nx < n and 0 <= ny < m) or tmp_space[nx][ny] == 6:
-                break
-            if tmp_space[nx][ny] == 0:
-                tmp_space[nx][ny] = "#"
+            while True:
+                cx, cy = cx + dx[ndir], cy + dy[ndir]
 
-ans = float('inf')
-def dfs(depth, space):
+                if cx < 0 or cx >= n or cy < 0 or cy >= m:
+                    break
+                if arr[cx][cy] == 6:
+                    break
+
+                visited[cx][cy] = True
+
+    sagak_cnt = 0
+    for i in range(n):
+        for j in range(m):
+            if not visited[i][j] and arr[i][j] == 0:
+                sagak_cnt += 1
+
+    return sagak_cnt
+
+
+def dfs(n, tlst):
     global ans
-    if depth == len(cctvs):
-        cnt = sum(row.count(0) for row in space)
-        ans = min(ans, cnt)
+    if n == cnt:
+        ans = min(ans, cal(tlst))
         return
 
-    x, y, cctv_type = cctvs[depth]
+    dfs(n + 1, tlst+[0]) # 0도 회전
+    dfs(n + 1, tlst+[1]) # 90도 회전
+    dfs(n + 1, tlst+[2]) # 180도 회전
+    dfs(n + 1, tlst+[3]) # 270도 회전
 
-    for dir in directions[cctv_type]:
-        tmp_space = deepcopy(space)
-        check_area(tmp_space, x, y, dir)
-        dfs(depth + 1, tmp_space)
+n, m = map(int, input().split())
+arr = [list(map(int, input().split())) for _ in range(n)]
+cctv = []
 
-dfs(0, space)
+for i in range(n):
+    for j in range(m):
+        if 1 <= arr[i][j] <= 5:
+            cctv.append((i, j))
 
+ans = n*m
+cnt = len(cctv)
+dfs(0, [])
 print(ans)
