@@ -1,117 +1,59 @@
-import copy
+def move(arr):
+    # 행 단위로 이동(같은 값 합치기)
 
-def find_block(arr):
-    max_block = 0
-    for i in range(n):
-        for j in range(n):
-            max_block = max(max_block, arr[i][j])
+    for i in range(len(arr)):
+        num = 0
+        tlst = []
+        for n in arr[i]:
+            #해당 행에서 숫자 하나씩 처리
+            if n == 0: # 빈칸은 처리 안 함
+                continue
+            if n == num: # 기준 숫자와 같은 경우 -> 합침
+                tlst.append(n*2)
+                num = 0
+            else:  # 기준 숫자와 다른 경우
+                if num != 0:
+                    tlst.append(num)
+                num = n
 
-    return max_block
+        # 종료 후 기준 숫자 있으면 tlst 추가 그리고 남은자리 0으로 채움
+        if num != 0:
+            tlst.append(num)
 
-def left(board):
-    new_board = copy.deepcopy(board)
-    # 왼쪽
-    for i in range(n):
-        check = 0
-        for j in range(1, n):
-            if new_board[i][j] != 0:
-                tmp = new_board[i][j]
-                new_board[i][j] = 0
+        arr[i] = tlst+[0]*(N - len(tlst))
 
-                if new_board[i][check] == 0:
-                    new_board[i][check] = tmp
-
-                elif new_board[i][check] == tmp:
-                    new_board[i][check] = tmp*2
-                    check += 1
-                else:
-                    check += 1
-                    new_board[i][check] = tmp
-    return new_board
-
-def right(board):
-    new_board = copy.deepcopy(board)
-    # 오른쪽
-    for i in range(n):
-        check = n - 1
-        for j in range(n-1, -1, -1):
-            if new_board[i][j] != 0:
-                tmp = new_board[i][j]
-                new_board[i][j] = 0
-
-                if new_board[i][check] == 0:
-                    new_board[i][check] = tmp
-
-                elif new_board[i][check] == tmp:
-                    new_board[i][check] = tmp*2
-                    check -= 1
-                else:
-                    check -= 1
-                    new_board[i][check] = tmp
-    # print(new_board)
-    return new_board
-
-def up(board):
-    new_board = copy.deepcopy(board)
-    # 윗쪽
-    for j in range(n):
-        check = 0
-        for i in range(n):
-            if new_board[i][j] != 0:
-                tmp = new_board[i][j]
-                new_board[i][j] = 0
-
-                if new_board[check][j] == 0:
-                    new_board[check][j] = tmp
-
-                elif new_board[check][j] == tmp:
-                    new_board[check][j] = tmp*2
-                    check += 1
-                else:
-                    check += 1
-                    new_board[check][j] = tmp
-    # print(new_board)
-    return new_board
-
-def down(board):
-    new_board = copy.deepcopy(board)
-
-    # 아랫쪽
-    for j in range(n):
-        check = n-1
-        for i in range(n-1, -1, -1):
-            if new_board[i][j] != 0:
-                tmp = new_board[i][j]
-                new_board[i][j] = 0
-
-                if new_board[check][j] == 0:
-                    new_board[check][j] = tmp
-
-                elif new_board[check][j] == tmp:
-                    new_board[check][j] = tmp*2
-                    check -= 1
-                else:
-                    check -= 1
-                    new_board[check][j] = tmp
-    # print(new_board)
-    return new_board
-
-def dfs(cnt, board):
+def dfs(n, arr):
     global ans
-    if cnt == 5:
-        ans = max(ans, find_block(board))
-        return ans  # 최댓값 반환
 
-    return max(
-        dfs(cnt + 1, left(board)),
-        dfs(cnt + 1, right(board)),
-        dfs(cnt + 1, up(board)),
-        dfs(cnt + 1, down(board))
-    )
+    if n == 5:
+        ans = max(ans, max(map(max, arr)))
+        return
 
-n = int(input())
+    # 좌측 이동 기준
+    narr = [lst[:] for lst in arr] # 딥카피 해서 전달
+    move(narr)
+    dfs(n + 1, narr)
+
+    # 우측
+    narr = [lst[::-1] for lst in arr]  # array를 반대방향으로 딥카피 해서 전달
+    move(narr)
+    dfs(n + 1, narr)
+
+    # 상
+    arr_t = list(map(list, zip(*arr))) # 열 -> 행으로
+    narr = [lst[:] for lst in arr_t]
+    move(narr)
+    dfs(n + 1, narr)
+
+    # 하
+    narr = [lst[::-1] for lst in arr_t]
+    move(narr)
+    dfs(n + 1, narr)
+
+
+N = int(input())
 ans = 0
-board = [list(map(int, input().split())) for _ in range(n)]
+board = [list(map(int, input().split())) for _ in range(N)]
 
-answer = dfs(0, board)
-print(answer)
+dfs(0, board)
+print(ans)
