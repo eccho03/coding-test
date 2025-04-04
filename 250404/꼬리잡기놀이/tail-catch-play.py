@@ -49,7 +49,7 @@ def move():
                 arr[ni][nj] = arr[ci][cj]
                 arr[ci][cj] = 4
 
-    print(arr)
+    #print(arr)
 
 def ball(dr):
     tran_arr = list(map(list, zip(*arr)))
