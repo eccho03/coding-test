@@ -88,7 +88,7 @@ arr = [list(map(int, input().split())) for _ in range(n)]
 dr = 0
 ans = 0
 
-print(arr)
+#print(arr)
 
 # [1] 각 팀의 머리 좌표 반환
 head = head_team()
@@ -101,7 +101,7 @@ for i, j in head:
     team = bfs(i, j)
     teams[team_idx] = team
     team_idx += 1
-print("teams:", teams)
+#print("teams:", teams)
 for _ in range(k):
     # [3] 이동하기
     move()
