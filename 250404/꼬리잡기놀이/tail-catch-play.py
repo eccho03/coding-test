@@ -1,8 +1,4 @@
-import sys
 from collections import deque
-
-sys.stdin = open('input.txt', 'r')
-input = sys.stdin.readline
 
 directions = [(-1, 0), (0, 1), (1, 0), (0, -1)] # 상 우 하 좌
 
@@ -43,8 +39,6 @@ def ball_throw(round):
     direction = (round // n) % 4
     offset = round % n
 
-    trans_arr = list(map(list, zip(*arr)))
-
     if direction == 0:  # 오른쪽
         for j in range(n):
             if arr[offset][j] >= 5:
@@ -55,12 +49,12 @@ def ball_throw(round):
                 return (i, offset)
     elif direction == 2:  # 왼쪽
         for j in reversed(range(n)):
-            if trans_arr[offset][j] >= 5:
-                return (offset, j)
+            if arr[n - 1 - offset][j] >= 5:
+                return (n - 1 - offset, j)
     else:  # 아래쪽
         for i in range(n):
-            if trans_arr[i][offset] >= 5:
-                return (i,offset)
+            if arr[i][n - 1 - offset] >= 5:
+                return (i, n - 1 - offset)
     return (-1, -1)
 
 n, m, k = map(int, input().split())
