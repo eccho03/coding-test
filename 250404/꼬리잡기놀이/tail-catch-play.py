@@ -1,118 +1,88 @@
 import sys
 from collections import deque
+input = sys.stdin.readline
 
-sys.stdin = open('input.txt', 'r')
-
-directions = [(-1, 0), (0, 1), (1, 0), (0, -1)] # 상 우 하 좌
-
-def head_team():
-    team = []
-    for i in range(n):
-        for j in range(n):
-            if arr[i][j] == 1:
-                team.append((i, j))
-
-    return team
-
-def bfs(si, sj):
-    q = deque([(si, sj)])
-    v = set()
-    v.add((si, sj))
-
-    mate = [(si, sj)]
-
-    while q:
-        ci, cj = q.popleft()
-
-        for i in directions:
-            ni, nj = ci + i[0], cj + i[1]
-
-            if ni < 0 or ni >= n or nj < 0 or nj >= n: continue
-
-            if (ni, nj) not in v:
-                # 꼬리 사람일 경우 한 바퀴 도는 경우 제외
-                if arr[ni][nj] == 2 or (arr[ni][nj] == 3 and (ci, cj)!=(si, sj)):
-                    # 중간 사람이나 꼬리 사람이라면
-                    v.add((ni, nj))
-                    q.append((ni, nj))
-                    mate.append((ni, nj))
-
-    return mate
-
-def move():
-    for t in team:
-        ci, cj = t
-        for di in directions:
-            ni, nj = ci + di[0], cj + di[1]
-            if ni < 0 or nj >= n or ni < 0 or nj >= n: continue
-            if arr[ni][nj] == 4:
-                arr[ni][nj] = arr[ci][cj]
-                arr[ci][cj] = 4
-
-    #print(arr)
-
-def ball(dr):
-    tran_arr = list(map(list, zip(*arr)))
-    if dr == 0:
-        # 오른쪽
-        for i in arr[ball_idx]:
-            # 해당 인덱스의 처음 0이 아닌 값을 리턴
-            if 0 < i < 4:
-                return i
-    elif dr == 1:
-        # 위쪽
-        for i in tran_arr[ball_idx]:
-            if 0 < i < 4:
-                return i
-    elif dr == 2:
-        # 왼쪽
-        for i in reversed(arr[ball_idx]):
-            if 0 < i < 4:
-                return i
-    else:
-        # 아래쪽
-        for i in reversed(tran_arr[ball_idx]):
-            if 0 < i < 4:
-                return i
-
-    return -1
-
-def find_team(i, j):
-    if (i, j) in teams:
-        return team_idx
-
+# 방향: 상우하좌
+directions = [(-1, 0), (0, 1), (1, 0), (0, -1)]
 
 n, m, k = map(int, input().split())
 arr = [list(map(int, input().split())) for _ in range(n)]
 
-dr = 0
+teams = {}
+team_n = 5  # 팀 번호는 5번부터 사용
+v = [[0] * n for _ in range(n)]
+
+# [1] BFS로 팀 구성원 좌표 저장 및 팀 번호 매기기
+def bfs(si, sj, team_n):
+    q = deque()
+    team = deque()
+
+    q.append((si, sj))
+    v[si][sj] = 1
+    team.append((si, sj))
+    arr[si][sj] = team_n
+
+    while q:
+        ci, cj = q.popleft()
+        for di, dj in directions:
+            ni, nj = ci + di, cj + dj
+            if 0 <= ni < n and 0 <= nj < n and v[ni][nj] == 0:
+                if arr[ni][nj] == 2 or (arr[ni][nj] == 3 and (ci, cj) != (si, sj)):
+                    v[ni][nj] = 1
+                    q.append((ni, nj))
+                    team.append((ni, nj))
+                    arr[ni][nj] = team_n
+    teams[team_n] = team
+
+# 팀별 구성 찾기
+for i in range(n):
+    for j in range(n):
+        if arr[i][j] == 1 and v[i][j] == 0:
+            bfs(i, j, team_n)
+            team_n += 1
+
+# 방향 순서: 우 → 상 → 좌 → 하
+di = [0, -1, 0, 1]
+dj = [1, 0, -1, 0]
 ans = 0
 
-#print(arr)
+# [2] 매 라운드마다 이동 + 공 던지기
+for r in range(k):
+    # [2-1] 각 팀 이동
+    for t in teams.values():
+        tail_i, tail_j = t.pop()  # 꼬리 제거
+        arr[tail_i][tail_j] = 4   # 이동선 복원
 
-# [1] 각 팀의 머리 좌표 반환
-head = head_team()
-teams ={}
-team_idx = 0
-ball_idx = 0
+        head_i, head_j = t[0]     # 머리 위치
+        for d in range(4):
+            ni, nj = head_i + di[d], head_j + dj[d]
+            if 0 <= ni < n and 0 <= nj < n and arr[ni][nj] == 4:
+                t.appendleft((ni, nj))
+                arr[ni][nj] = arr[head_i][head_j]  # 팀 번호로 덮어쓰기
+                break
 
-for i, j in head:
-    # [2] 각 팀의 구성원들 찾기
-    team = bfs(i, j)
-    teams[team_idx] = team
-    team_idx += 1
-#print("teams:", teams)
-for _ in range(k):
-    # [3] 이동하기
-    move()
+    # [2-2] 공 던지기 방향 계산
+    d = (r // n) % 4
+    offset = r % n
+    if d == 0:
+        ci, cj = offset, 0
+    elif d == 1:
+        ci, cj = n - 1, offset
+    elif d == 2:
+        ci, cj = n - 1 - offset, n - 1
+    else:
+        ci, cj = 0, n - 1 - offset
 
-    # [4] 공 던지기
-    if ball_idx == n-1: # n행 혹은 n열까지 이동시 다시 ball idx 초기화하고 방향 전환
-        ball_idx = 0
-        dr = (dr + 1) % 4
-
-    target = ball(dr) ** 2
-    if target != -1:
-        ans += target
+    # [2-3] 공이 사람을 맞추면 점수 획득
+    for _ in range(n):
+        if 0 <= ci < n and 0 <= cj < n and arr[ci][cj] >= 5:
+            team_id = arr[ci][cj]
+            team = teams[team_id]
+            idx = team.index((ci, cj))
+            ans += (idx + 1) ** 2
+            team.reverse()  # 머리-꼬리 반전
+            break
+        ci += di[d]
+        cj += dj[d]
 
 print(ans)
