@@ -1,7 +1,3 @@
-import sys
-sys.stdin = open('input.txt','r')
-input = sys.stdin.readline
-
 n = 4
 dx = [-1, -1, 0, 1, 1, 1, 0, -1]  # 반시계 45도
 dy = [0, -1, -1, -1, 0, 1, 1, 1]
