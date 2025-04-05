@@ -1,102 +1,101 @@
 import sys
-sys.stdin = open('input.txt', 'r')
+sys.stdin = open('input.txt','r')
 input = sys.stdin.readline
 
-directions = [(-1, 0), (-1, -1), (0, -1), (1, -1),
-              (1, 0), (1, 1), (0, 1), (-1, 1)]  # 반시계
-
-dx = [-1, 0, 1, 0]  # 상좌하우
-dy = [0, -1, 0, 1]
+n = 4
+dx = [-1, -1, 0, 1, 1, 1, 0, -1]  # 반시계 45도
+dy = [0, -1, -1, -1, 0, 1, 1, 1]
+pdx = [-1, 0, 1, 0]  # 상좌하우
+pdy = [0, -1, 0, 1]
 
 def in_range(x, y):
-    return 0 <= x < 4 and 0 <= y < 4
+    return 0 <= x < n and 0 <= y < n
 
-def move_mon(si, sj, dir, round):
-    dir_cnt = 0
-    while dir_cnt < 8:
-        di, dj = directions[dir]
-        ni, nj = si + di, sj + dj
-        if in_range(ni, nj) and dead_body[ni][nj] <= round and (ni, nj) != (pac_x, pac_y):
-            return ni, nj, dir
-        dir = (dir + 1) % 8
-        dir_cnt += 1
-    return si, sj, dir  # 못 움직이면 제자리
+def monster_make_egg():
+    return [m[:] for m in m_arr]
 
-def eat_monsters(d1, d2, d3):
-    x, y = pac_x, pac_y
+def monster_move(rounds):
+    new_m_arr = []
+    for mx, my, md in m_arr:
+        for i in range(8):
+            nd = (md + i) % 8
+            nx, ny = mx + dx[nd], my + dy[nd]
+            if in_range(nx, ny) and dead_body[nx][ny] == 0 and not (nx == px and ny == py):
+                new_m_arr.append([nx, ny, nd])
+                break
+        else:
+            new_m_arr.append([mx, my, md])
+    return new_m_arr
+
+def eat_monster(i, j, z):
     path = []
     visited = set()
-    cnt = 0
-    for d in [d1, d2, d3]:
-        x += dx[d]
-        y += dy[d]
-        if not in_range(x, y):
+    eat = 0
+    nx, ny = px, py
+    for d in [i, j, z]:
+        nx += pdx[d]
+        ny += pdy[d]
+        if not in_range(nx, ny):
             return -1, []
-        path.append((x, y))
-    for i, j in path:
-        if (i, j) not in visited:
-            cnt += len(monster_map[i][j])
-            visited.add((i, j))
-    return cnt, path
+        path.append((nx, ny))
+    for x, y in set(path):
+        eat += sum(1 for mx, my, _ in m_arr if mx == x and my == y)
+    return eat, path
 
-def best_pacman_move():
-    max_cnt = -1
+def pacman_move(rounds):
+    global px, py, m_arr
+    max_eat = -1
     best_path = []
+    best_dirs = ()
     for i in range(4):
         for j in range(4):
-            for k in range(4):
-                cnt, path = eat_monsters(i, j, k)
-                if cnt > max_cnt or (cnt == max_cnt and path < best_path):
-                    max_cnt = cnt
+            for z in range(4):
+                eat, path = eat_monster(i, j, z)
+                if eat > max_eat or (eat == max_eat and path < best_path):
+                    max_eat = eat
                     best_path = path
+                    best_dirs = (i, j, z)
+    if not best_path:
+        return
+    # 몬스터 제거 + 시체 남기기
+    new_m_arr = []
+    for mx, my, md in m_arr:
+        if (mx, my) not in best_path:
+            new_m_arr.append([mx, my, md])
+        else:
+            dead_body[mx][my] = 3  # 시체는 2턴 후 사라지므로 3으로 설정
+    m_arr = new_m_arr
+    # 팩맨 이동
+    for d in best_dirs:
+        px += pdx[d]
+        py += pdy[d]
 
-    return best_path
+def dead_body_decay():
+    for i in range(n):
+        for j in range(n):
+            if dead_body[i][j] > 0:
+                dead_body[i][j] -= 1
 
+def egg_up(eggs):
+    for ex, ey, ed in eggs:
+        m_arr.append([ex, ey, ed])
+
+def count_monsters():
+    return len(m_arr)
+
+# 입력
 m, t = map(int, input().split())
-pac_x, pac_y = map(lambda x: int(x) - 1, input().split())
-monster_map = [[[] for _ in range(4)] for _ in range(4)]
-dead_body = [[0] * 4 for _ in range(4)]
+px, py = map(lambda x: int(x)-1, input().split())
+m_arr = [list(map(lambda x: int(x)-1, input().split())) for _ in range(m)]
+dead_body = [[0]*n for _ in range(n)]
 
-for _ in range(m):
-    r, c, d = map(int, input().split())
-    monster_map[r-1][c-1].append(d-1)
+# 시뮬레이션
+for round in range(t):
+    eggs = monster_make_egg()       # 1. 알 복제
+    m_arr = monster_move(round)     # 2. 몬스터 이동
+    pacman_move(round)              # 3. 팩맨 이동 및 시체 생성
+    dead_body_decay()               # 4. 시체 감소
+    egg_up(eggs)                    # 5. 알 부화
 
-for round in range(1, t+1):
-    # 1. 몬스터 복제 시도
-    egg = [[list(monster_map[i][j]) for j in range(4)] for i in range(4)]
-
-    # 2. 몬스터 이동
-    new_map = [[[] for _ in range(4)] for _ in range(4)]
-    for i in range(4):
-        for j in range(4):
-            for d in monster_map[i][j]:
-                ni, nj, nd = move_mon(i, j, d, round)
-                new_map[ni][nj].append(nd)
-    monster_map = new_map
-
-    # 3. 팩맨 이동
-    path = best_pacman_move()
-    for x, y in path:
-        if monster_map[x][y]:
-            monster_map[x][y] = []
-            dead_body[x][y] = round + 2
-    if path:
-        pac_x, pac_y = path[-1]
-
-    # 4. 몬스터 시체 소멸
-    for i in range(4):
-        for j in range(4):
-            if dead_body[i][j] == round:
-                dead_body[i][j] = 0
-
-    # 5. 몬스터 복제 완성
-    for i in range(4):
-        for j in range(4):
-            monster_map[i][j].extend(egg[i][j])
-
-# 최종 몬스터 수 세기
-ans = 0
-for i in range(4):
-    for j in range(4):
-        ans += len(monster_map[i][j])
-print(ans)
+# 결과 출력
+print(count_monsters())
