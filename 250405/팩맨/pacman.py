@@ -1,3 +1,7 @@
+import sys
+sys.stdin = open('input.txt', 'r')
+input = sys.stdin.readline
+
 directions = [(-1, 0), (-1, -1), (0, -1), (1, -1),
               (1, 0), (1, 1), (0, 1), (-1, 1)]  # 반시계
 
@@ -42,9 +46,10 @@ def best_pacman_move():
         for j in range(4):
             for k in range(4):
                 cnt, path = eat_monsters(i, j, k)
-                if cnt > max_cnt:
+                if cnt > max_cnt or (cnt == max_cnt and path < best_path):
                     max_cnt = cnt
                     best_path = path
+
     return best_path
 
 m, t = map(int, input().split())
