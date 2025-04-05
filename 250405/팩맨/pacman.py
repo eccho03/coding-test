@@ -8,7 +8,7 @@ def in_range(x, y):
     return 0 <= x < n and 0 <= y < n
 
 def monster_make_egg():
-    return [m[:] for m in m_arr]
+    return [[mx, my, md] for mx, my, md in m_arr]
 
 def monster_move(rounds):
     new_m_arr = []
