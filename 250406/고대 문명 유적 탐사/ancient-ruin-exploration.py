@@ -1,7 +1,3 @@
-import sys
-sys.stdin = open('input.txt','r')
-input = sys.stdin.readline
-
 def rotate(arr, si, sj): # 90도 시계방향 회전
     narr = [x[:] for x in arr] # 회전 대상을 narr에 복사
     for i in range(3):
