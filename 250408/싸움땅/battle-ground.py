@@ -1,3 +1,7 @@
+import sys
+sys.stdin = open('input.txt','r')
+input = sys.stdin.readline
+
 di = [-1, 0, 1, 0] # 상 우 하 좌
 dj = [0, 1, 0, -1]
 
@@ -22,41 +26,40 @@ def find_player(ti, tj):
             return i, pi, pj, pd, ps
     return -1, -1, -1, -1, -1
 
-def vs_player(pi,pj,pd,ps,ti,tj,td,ts):
+def vs_player(pi,pj,pd,ps,ti,tj,td,ts,win_idx, lose_idx):
     # t : 승리자 / p : 패배자
     # 이긴 플레이어 - 점수 획득
-    ans[tidx] += ts - ps
-    #print(ans)
+    ans[win_idx] += ts - ps
     if (ti, tj) in guns:
         tmp_gun = []
         for (gi, gj, ga) in guns:
             if (ti, tj) == (gi, gj):
                 tmp_gun.append((gi, gj, ga))
         if len(tmp_gun) >= 1:
-            tmp_gun.sort(key=lambda x: x[2])  # 공격력 높은 순으로 정렬
+            tmp_gun.sort(key=lambda x: x[2], reverse=True)  # 공격력 높은 순으로 정렬
             tar_gun = tmp_gun[0]
             guns.remove(tar_gun)
             ts += tmp_gun[0][2]
-            players[idx] = (ti, tj, td, ts)
+            players[win_idx] = (ti, tj, td, ts)
 
     # 진 플레이어의 이동
     ni, nj = pi + di[pd], pj + dj[pd]
     if ni < 0 or ni >= N or nj < 0 or nj >= N or (ni, nj) in players:
         # 이동하려는 칸에 1)다른 플레이어가 있는경우 2)격자 범위밖인경우
-        for rot in range(1, 4):  # 오른쪽으로 90도씩 회전하여 빈 칸이 보이는 순간 이동
+        for rot in range(4):  # 오른쪽으로 90도씩 회전하여 빈 칸이 보이는 순간 이동
             ni, nj = pi + di[(pd + rot) % 4], pj + dj[(pd + rot) % 4]
-    pi, pj = ni, nj
-    tmp_gun = []
-    for (gi, gj, ga) in guns:
-        if (pi, pj) == (gi, gj):
-            tmp_gun.append((gi, gj, ga))
-    if len(tmp_gun) >= 1:
-        tmp_gun.sort(key=lambda x: x[2])  # 공격력 높은 순으로 정렬
-        tar_gun = tmp_gun[0]
-        guns.remove(tar_gun)
-        ps += tmp_gun[0][2]
-        players[idx] = (ni, nj, pd, ps)
-    #print(ni, nj, pd, ps)
+        pi, pj = ni, nj
+        tmp_gun = []
+        for (gi, gj, ga) in guns:
+            if (pi, pj) == (gi, gj):
+                tmp_gun.append((gi, gj, ga))
+        if len(tmp_gun) >= 1:
+            tmp_gun.sort(key=lambda x: x[2], reverse=True)  # 공격력 높은 순으로 정렬
+            tar_gun = tmp_gun[0]
+            guns.remove(tar_gun)
+            ps += tmp_gun[0][2]
+
+    players[lose_idx] = (ni, nj, pd, ps)
 
 for i in range(N):
     for j in range(N):
@@ -66,6 +69,7 @@ for i in range(N):
 
 for _ in range(K):
     # 플레이어 한 명씩 돌면서 아래의 과정을 반복
+    # print("플레이어정보", players)
     for idx in range(1, M+1):
         pi, pj, pd, ps = players[idx]
         # [1] 본인 방향대로 1칸 이동 (벗어나면 반대 방향)
@@ -86,7 +90,7 @@ for _ in range(K):
                 if (pi, pj)==(gi, gj):
                     tmp_gun.append((gi, gj, ga))
             if len(tmp_gun)>=1:
-                tmp_gun.sort(key=lambda x:x[2]) # 공격력 높은 순으로 정렬
+                tmp_gun.sort(key=lambda x:x[2], reverse=True) # 공격력 높은 순으로 정렬
                 tar_gun = tmp_gun[0]
                 guns.remove(tar_gun)
                 ps += tmp_gun[0][2]
@@ -96,16 +100,16 @@ for _ in range(K):
         # [2]-2 이동한 칸에 플레이어가 있을 경우 - 싸움!!
         else:
             if ps < ts:
-                vs_player(pi, pj, pd, ps, ti, tj, td, ts)
+                vs_player(pi, pj, pd, ps, ti, tj, td, ts, tidx, idx)
 
             elif ps > ts:
-                vs_player(ti, tj, td, ts, pi, pj, pd, ps)
+                vs_player(ti, tj, td, ts, pi, pj, pd, ps, idx, tidx)
             else:
                 # 비기는 경우에는 초기 능력치 비교
                 if init_point[idx] > init_point[tidx]:
-                    vs_player(ti, tj, td, ts, pi, pj, pd, ps)
+                    vs_player(ti, tj, td, ts, pi, pj, pd, ps, idx, tidx)
                 else:
-                    vs_player(pi, pj, pd, ps, ti, tj, td, ts)
+                    vs_player(pi, pj, pd, ps, ti, tj, td, ts, tidx, idx)
 
 
         # 2-1) 이긴 플레이어 점수 획득
@@ -113,3 +117,5 @@ for _ in range(K):
         # 2-2) 진 플레이어 이동 (오른쪽으로 90도씩 회전하면서 이동 가능 시 이동)
 
 print(*ans[1:]) # 0번 플레이어는 없음
+
+
