@@ -107,6 +107,8 @@ for T in range(1, K+1): # 턴 1부터 시작 !!
             for idx in ilst:
                 runner.pop(idx)
 
+    if not runner:
+        break
     #myarr()  # 디버깅용
 
 print(ans)
