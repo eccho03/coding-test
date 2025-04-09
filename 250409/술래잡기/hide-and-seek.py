@@ -42,14 +42,16 @@ for T in range(1, K + 1):  # 턴 1부터 시작 !!
     # [1] 도망자 이동
     for i in range(len(arr)):
         ci, cj, dr = arr[i]
-        if abs(ci - ti) + abs(cj - tj) <= 3:  # 현재 술래와 거리 <= 3만 움직임
-            ni, nj = ci + di[dr], cj + dj[dr]
-            if (ni, nj) == (ti, tj):  continue  # 움직이려는 칸에 술래 => 안 움직임
-            if ni < 1 or ni >= N+1 or nj < 1 or nj >= N+1:  # 범위 밖이라면
-                dr = opp[dr]
-                ni, nj = ci + di[dr], cj + dj[dr]
-
-            arr[i]=[ni,nj,dr]
+        if abs(arr[i][0] - ti) + abs(arr[i][1] - tj) <= 3:  # 술래와 거리 3이하인 경우 이동
+            ni, nj = arr[i][0] + di[arr[i][2]], arr[i][1] + dj[arr[i][2]]
+            if 1 <= ni <= N and 1 <= nj <= N:  # 범위내면 술래체크
+                if (ni, nj) != (ti, tj):  # 술래위치가 아니면 이동
+                    arr[i][0], arr[i][1] = ni, nj
+            else:  # 범위밖=>방향 반대
+                arr[i][2] = opp[arr[i][2]]  # 반대 방향전환 및 저장
+                ni, nj = arr[i][0] + di[arr[i][2]], arr[i][1] + dj[arr[i][2]]
+                if (ni, nj) != (ti, tj):
+                    arr[i][0], arr[i][1] = ni, nj
 
     # [2] 술래의 이동
     cnt += 1
