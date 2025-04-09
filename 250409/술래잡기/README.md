@@ -5,11 +5,38 @@
 |[dx dy technique](https://www.codetree.ai/training-field/search/?tags=dx+dy+technique), [Simulation](https://www.codetree.ai/training-field/search/?tags=Simulation)|[일반연습 / 문제은행](https://www.codetree.ai/training-field/home)|
 
 
+# [REVIEW]
+하 쉬웠는데 디테일이 떨어져서 제대로 풀지 못했다..
 
+1)
+```Python
+if not (1<=ni<=N and 1<=nj<=N):  # 범위 밖이라면
+    dr = opp[dr]
+    ni, nj = ci + di[dr], cj + dj[dr]
+    if (ni, nj) == (ti, tj):  continue
+```
+범위 밖이라면 방향 이동 후 다시 이동한 다음 **그 좌표도 술래 유무 확인**  
 
+2)
+```Python
+ti,tj,td = (N+1)//2, (N+1)//2
+```
+아니 (N+1)//2인데 N//2로 계산했다... 잘못하면 큰 문제 되니까 무조건 확인하자
 
+3)
+술래 이동 시 *두 번에 한 번씩 길이 증가* 이 규칙을 제대로 찾았더라면 ,,
+한 번에 한 번이라고 착각했다..
 
-
+4)
+```Python
+for i in range(len(arr) - 1, -1, -1):
+    ci, cj, dr = arr[i]
+    if (ci, cj) in target and (ci, cj) not in tree:
+        arr.pop(i)
+        ans += T
+```
+배열에서 pop 해야 될 때는 무조건 **역순으로 for문 돌면서** pop 해주기 명심 !!
+(잘못하면 인덱스 꼬일 수 있음)
 
 [b5]: https://img.shields.io/badge/Bronze_5-%235D3E31.svg
 [b4]: https://img.shields.io/badge/Bronze_4-%235D3E31.svg
