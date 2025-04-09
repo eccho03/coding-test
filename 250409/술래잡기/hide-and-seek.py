@@ -39,8 +39,7 @@ tree = [tuple(map(lambda x: int(x)-1, input().split())) for _ in range(H)] #0-ba
 # [0] 술래의 위치 구하기
 ti, tj, td = N//2, N//2, 0
 
-cnt = 0
-mx_cnt = 0
+mx_cnt, cnt, flag, val = 1, 0, 0, 1
 ans = 0
 # K턴 반복
 for T in range(1, K+1): # 턴 1부터 시작 !!
@@ -59,43 +58,24 @@ for T in range(1, K+1): # 턴 1부터 시작 !!
             arr[ni][nj]=arr[ci][cj] # 맵 상에서도 도망자 위치 업데이트
             arr[ci][cj]=0
 
-    # [2] 술래 이동
-    #print("술래좌표:", ti, tj, td)
-
-    cnt+=1
-    #print("cnt mxcnt", cnt, mx_cnt)
-
-    # if (ti,tj)==(0,0):
-    #     td=2
-    # elif (ti,tj)==(N//2,N//2):
-    #     td=1
-
-    tni, tnj = ti+tdi[td], tj+tdj[td]
-
-    if (T//(N*N))%2 == 0:
-        #시계방향 진행
-
-        if (ti,tj)==(N//2,N//2):
-            td = (td + 1) % 4  # 시계방향 회전
-            cnt=0
-            mx_cnt = 1
-
-        elif cnt==mx_cnt:
-            td=(td+1)%4 #시계방향 회전
-            cnt=0
-            mx_cnt += 1
+    # [2] 술래의 이동
+    cnt += 1
+    ti, tj = ti + tdi[td], tj + tdj[td]
+    if (ti, tj) == (1, 1):  # 안쪽으로 동작하는 달팽이
+        mx_cnt, cnt, flag, val = N, 1, 1, -1
+        td = 2  # 초기방향은 아래로(하)
+    elif (ti, tj) == (M, M):  # 바깥으로 동작하는 달팽이
+        mx_cnt, cnt, flag, val = 1, 0, 0, 1
+        td = 0
     else:
-        if (ti, tj) == (0, 0):
-            td = (td - 1) % 4  # 반시계방향 회전
+        if cnt == mx_cnt:  # 방향 변경
             cnt = 0
-            mx_cnt = 1
-
-        elif cnt == mx_cnt:
-            td = (td - 1) % 4  # 반시계방향 회전
-            cnt = 0
-            mx_cnt += 1
-
-    ti,tj=tni,tnj
+            td = (td + val) % 4
+            if flag == 0:
+                flag = 1
+            else:
+                flag = 0  # 두 번에 한 번씩 길이 증가
+                mx_cnt += val
     #print("이동후 술래좌표:",ti,tj,td)
 
     # [3] 술래가 도망자 잡기
