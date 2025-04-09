@@ -101,7 +101,7 @@ for T in range(1, K+1): # 턴 1부터 시작 !!
     for ai, aj in target:
         if 0<=ai<N and 0<=aj<N and arr[ai][aj]>=1 and (ai,aj) not in tree:
             # 범위 내 / 나무 x
-            ans += T*arr[ai][aj]
+            ans += T
             arr[ai][aj]=0
             ilst=find_runner()
             for idx in ilst:
