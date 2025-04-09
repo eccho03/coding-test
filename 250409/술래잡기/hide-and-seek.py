@@ -1,5 +1,5 @@
 import sys
-sys.stdin = open('input.txt','r')
+sys.stdin = open('input.txt', 'r')
 input = sys.stdin.readline
 
 def myarr():
@@ -7,108 +7,84 @@ def myarr():
         print(*arr[i])
     print()
 
-    print("술래좌표:",ti,tj, td)
-    print("나무 좌표:",tree)
-    print("도망자좌표: ",runner)
-
-def find_runner():
-    ilst=[]
-    for idx in runner:
-        i, j, d = runner[idx]
-        if (i, j) == (ai, aj):
-            ilst.append(idx)
-    return ilst
-
-di = [0, 0, 1, -1] # 좌 우 하 상
-dj = [-1, 1, 0, 0]
-opp={0:1, 1:0, 2:3, 3:2}
-
-tdi = [-1, 0, 1, 0] # 술래 시계 방향
-tdj = [0, 1, 0, -1] # 상 우 하 좌
+    print("술래좌표:", ti, tj, td)
+    print("나무 좌표:", tree)
 
 N, M, H, K = map(int, input().split())
-arr = [[0]*N for _ in range(N)]
-runner = {}
-for idx in range(M):
-    i, j, d = map(int, input().split())
-    arr[i-1][j-1] += 1 #0-based
-    runner[idx] = [i-1,j-1,d]
 
-tree = [tuple(map(lambda x: int(x)-1, input().split())) for _ in range(H)] #0-based
+# 도망자 좌표 입력
+arr = []
+for _ in range(M):
+    arr.append(list(map(int, input().split())))
 
-# [0] 술래의 위치 구하기
-ti, tj, td = N//2, N//2, 0
+# 나무좌표 입력
+tree = set()
+for _ in range(H):
+    i,j=map(int, input().split())
+    tree.add((i,j))
 
-cnt = 0
-mx_cnt = 0
+# 0(좌) 1(우) 2(하) 3(상)
+di = [ 0, 0, 1,-1]
+dj = [-1, 1, 0, 0]
+opp = {0:1, 1:0, 2:3, 3:2}  # 반대방향
+
+# 방향  상 우 하 좌   tagger(술래)방향 (바깥으로 돌 때 방향)
+tdi = [-1, 0, 1, 0]
+tdj = [ 0, 1, 0,-1]
+
+mx_cnt, cnt, flag, val = 1, 0, 0, 1
+ti,tj,td = (N+1)//2, (N+1)//2, 0
+
 ans = 0
+
 # K턴 반복
-for T in range(1, K+1): # 턴 1부터 시작 !!
+for T in range(1, K + 1):  # 턴 1부터 시작 !!
     # [1] 도망자 이동
-    for idx in runner:
-        ci, cj, dr = runner[idx]
-        if abs(ci-ti)+abs(cj-tj)<=3: #현재 술래와 거리 <=3만 움직임
-            ni, nj = ci+di[dr], cj+dj[dr]
-            if ni<0 or ni>=N or nj<0 or nj>=N: # 범위 밖이라면
+    for i in range(len(arr)):
+        ci, cj, dr = arr[i]
+        if abs(ci - ti) + abs(cj - tj) <= 3:  # 현재 술래와 거리 <= 3만 움직임
+            ni, nj = ci + di[dr], cj + dj[dr]
+            if (ni, nj) == (ti, tj):  continue  # 움직이려는 칸에 술래 => 안 움직임
+            if ni < 1 or ni >= N+1 or nj < 1 or nj >= N+1:  # 범위 밖이라면
                 dr = opp[dr]
                 ni, nj = ci + di[dr], cj + dj[dr]
-            if (ni, nj) == (ti, tj):    continue # 움직이려는 칸에 술래 => 안 움직임
 
-            runner[idx] = [ni, nj, dr] # 도망자 정보 업데이트
+            arr[i]=[ni,nj,dr]
 
-            arr[ni][nj]=arr[ci][cj] # 맵 상에서도 도망자 위치 업데이트
-            arr[ci][cj]=0
-
-    # [2] 술래 이동
-    #print("술래좌표:", ti, tj, td)
-
-    cnt+=1
-
-    tni, tnj = ti+tdi[td], tj+tdj[td]
-
-    if (T//(N*N))%2 == 0:
-        #시계방향 진행
-
-        if (ti,tj)==(N//2,N//2):
-            td = (td + 1) % 4  # 시계방향 회전
-            cnt=0
-            mx_cnt = 1
-
-        elif cnt==mx_cnt:
-            td=(td+1)%4 #시계방향 회전
-            cnt=0
-            mx_cnt += 1
+    # [2] 술래의 이동
+    cnt += 1
+    ti, tj = ti + tdi[td], tj + tdj[td]
+    if (ti, tj) == (1, 1):  # 안쪽으로 동작하는 달팽이
+        mx_cnt, cnt, flag, val = N, 1, 1, -1
+        td = 2  # 초기방향은 아래로(하)
+    elif (ti, tj) == ((N+1)//2, (N+1)//2):  # 바깥으로 동작하는 달팽이
+        mx_cnt, cnt, flag, val = 1, 0, 0, 1
+        td = 0
     else:
-        if (ti, tj) == (0, 0):
-            td = (td - 1) % 4  # 반시계방향 회전
+        if cnt == mx_cnt:  # 방향 변경
             cnt = 0
-            mx_cnt = 1
-
-        elif cnt == mx_cnt:
-            td = (td - 1) % 4  # 반시계방향 회전
-            cnt = 0
-            mx_cnt += 1
-
-    ti,tj=tni,tnj
-    #print("이동후 술래좌표:",ti,tj,td)
+            td = (td + val) % 4
+            if flag == 0:
+                flag = 1
+            else:
+                flag = 0  # 두 번에 한 번씩 길이 증가
+                mx_cnt += val
 
     # [3] 술래가 도망자 잡기
-    target=[]
-    for i in range(0,3):
-        ai,aj = ti+(tdi[td])*i, tj+(tdj[td])*i
-        target.append((ai,aj))
-    #print("target",target)
-    for ai, aj in target:
-        if 0<=ai<N and 0<=aj<N and arr[ai][aj]>=1 and (ai,aj) not in tree:
-            # 범위 내 / 나무 x
-            ans += T
-            arr[ai][aj]-=1
-            ilst=find_runner()
-            for idx in ilst:
-                runner.pop(idx)
+    target = []
+    # 술래가 잡을 수 있는 위치 계산
+    for i in range(3):  # 술래의 타겟 위치를 계산
+        ai, aj = ti + (tdi[td]) * i, tj + (tdj[td]) * i
+        target.append((ai, aj))
 
-    if not runner:
+    for i in range(len(arr) - 1, -1, -1):
+        ci, cj, dr = arr[i]
+        if (ci, cj) in target and (ci, cj) not in tree:
+            arr.pop(i)
+            ans += T
+    # 도망자가 없다면 더이상 점수도 없음
+    if not arr:
         break
-    #myarr()  # 디버깅용
+# myarr()  # 디버깅용
 
 print(ans)
