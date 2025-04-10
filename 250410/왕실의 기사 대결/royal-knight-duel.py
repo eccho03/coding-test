@@ -51,7 +51,6 @@ N, M, Q = map(int, input().split())
 arr = [[2]*(N+2)]+[[2]+list(map(int, input().split()))+[2] for _ in range(N)]+[[2]*(N+2)]
 v = [[0]*(N+2) for _ in range(N+2)]
 knight = {}
-damage = [0] * (M+1)
 init_k = [0] * (N + 1)
 for idx in range(1, M+1):
     r,c,h,w,k = map(int, input().split())
