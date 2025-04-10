@@ -1,6 +1,3 @@
-import sys
-sys.stdin = open('input.txt','r')
-
 di = [-1, 0, 1, 0]
 dj = [0, 1, 0, -1] # 상 우 하 좌
 
@@ -71,4 +68,7 @@ for i, dr in order: # Q번에 걸친 왕의 명령
     push_unit(i, dr)
 
 # 정답 처리
-print(sum(init_k)-sum(damage))
+ans = 0
+for idx in knight:
+    ans += init_k[idx]-knight[idx][4]
+print(ans)
