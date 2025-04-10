@@ -1,7 +1,3 @@
-import sys
-sys.stdin = open('input.txt','r')
-input = sys.stdin.readline
-
 R,C,K = map(int, input().split())
 lst = [list(map(int, input().split())) for _ in range(K)]
 arr = [[1]+[0]*C+[1] for _ in range(R+3)]+[[1]*(C+2)]
@@ -29,7 +25,7 @@ def bfs(si, sj):
             ni,nj = ci+di, cj+dj
             if ni<0 or ni>=R+3 or nj<0 or nj>=C+2:  continue
             # 1) 골렘 자신이거나 2) 현재 골렘 출구가 다른 골렘과 인접하다면
-            if v[ni][nj]==0 and arr[ni][nj]==arr[ci][cj] or ((ci,cj) in exit_set and arr[ni][nj]>=2):
+            if v[ni][nj]==0 and (arr[ni][nj]==arr[ci][cj] or ((ci,cj) in exit_set and arr[ni][nj]>=2)):
                 q.append((ni,nj))
                 v[ni][nj]=1
 
@@ -67,7 +63,7 @@ for cj, dr in lst:
     if ci<4:
         # 게임 재시작
         arr = [[1]+[0]*C+[1] for _ in range(R+3)]+[[1]*(C+2)]
-        exit_set.clear()
+        exit_set = set()
         num=2
     else:
         arr[ci-1][cj]=num
