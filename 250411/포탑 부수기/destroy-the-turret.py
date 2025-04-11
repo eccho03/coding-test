@@ -36,10 +36,9 @@ def bfs(si,sj,ei,ej):
         # 네방향, 미방문, 조건: > 0
         for dr in range(4): # 우 하 좌 상
             ni,nj = ci+di[dr], cj+dj[dr]
-            if ni < 0: ni = N - 1
-            if ni >= N: ni = 0
-            if nj < 0: nj = M - 1
-            if nj >= M: nj = 0
+            if ni<0 or ni>=N or nj<0 or nj>=M:
+                dr=(dr+2)%4
+                ni,nj = ci+di[dr], cj+dj[dr]
             if arr[ni][nj] <= 0 or len(v[ni][nj])!=0:
                 continue  # 부서진 포탑인 경우 패스
 
@@ -56,7 +55,6 @@ def bomb(si,sj,ei,ej):
         ci,cj = (ei+bdi[dr])%N, (ej+bdj[dr])%M
         if (ci,cj)==(si,sj):    continue
         if arr[ci][cj]<=0:    continue # 부서진 포탑
-        arr[ci][cj] = max(0, arr[ci][cj]-arr[si][sj]//2)
         fset.add((ci,cj))
 
 for T in range(1, K+1): # K턴 반복
@@ -92,14 +90,13 @@ for T in range(1, K+1): # K턴 반복
     # [3] 레이저 공격
     if bfs(si,sj,ei,ej)==False:
         bomb(si,sj,ei,ej)
-    else:
-        for i,j in fset:
-            if (i,j)==(ei,ej):
-                arr[i][j]=max(0, arr[i][j]-arr[si][sj])
-            elif (i,j)==(si,sj):
-                pass
-            else:
-                arr[i][j] = max(0, arr[i][j] - arr[si][sj]//2)
+    for i,j in fset:
+        if (i,j)==(ei,ej):
+            arr[i][j]=max(0, arr[i][j]-arr[si][sj])
+        elif (i,j)==(si,sj):
+            pass
+        else:
+            arr[i][j] = max(0, arr[i][j] - arr[si][sj]//2)
 
     # print(fset)
     # print(arr)
