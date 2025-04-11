@@ -1,6 +1,3 @@
-import sys
-sys.stdin = open('input.txt','r')
-
 def cnt_surviver():
     for i in range(N):
         for j in range(N):
@@ -12,21 +9,22 @@ def cal_distance(x,y):
     return abs(x-ei)+abs(y-ej)
 
 def find_square(arr):
-    mn = N
-    # [1] 비상구와 모든 사람 간의 가장 짧은 또는 가로 세러 거리 구하기
-    for i in range(N):
-        for j in range(N):
-            if -10<=arr[i][j]<=-1: # 사람인 경우
-                mn = min(mn, max(abs(ei-i), abs(ej-j)))
-    # [2] 모두 순회하면서 길이 L인 정사각형에 비상구와 위치 구하기
-    for si in range(N-mn):
-        for sj in range(N-mn): # 가능한 모든 시작위치
-            if si<=ei<=si+mn and sj<=ej<=sj+mn: # 비상구가 포함된 위치
-                for i in range(si, si+mn+1):
-                    for j in range(sj, sj+mn+1):
+    # rx, ry, rd 찾기 (rx 좌표 작고, ry좌표 작은 순)
+    for l in range(1, N + 1):  # 한변 크기(1 ~ N)
+        for rx in range(0, N - l + 1):
+            for ry in range(0, N - l + 1):
+                people_include = False
+                for i in range(N):
+                    for j in range(N):
                         if -10<=arr[i][j]<=-1:
-                            return si, sj, mn+1
-    return -1,-1,-1
+                            if rx <= i < rx + l and ry <= j < ry + l:
+                                people_include = True
+
+                if people_include and (rx <= ei < rx + l and ry <= ej < ry + l):
+                    # 출구 포함 & 참가자 최소 1명 포함 체크
+                    return rx, ry, l
+
+    return -1, -1, -1
 
 def find_exit(arr):
     for i in range(N):
