@@ -1,6 +1,3 @@
-import sys
-sys.stdin = open('input.txt','r')
-
 N, M, K = map(int, input().split())
 arr = [list(map(int, input().split())) for _ in range(N)]
 turn = [[0] * M for _ in range(N)]  # 공격한 턴수를 기록(최근공격 체크)
@@ -52,7 +49,7 @@ def bomb(si,sj,ei,ej):
 
     arr[ei][ej] = max(0, arr[ei][ej]-arr[si][sj])
     for dr in range(8):
-        ci,cj = (si+bdi[dr])%N, sj+bdj[dr]
+        ci,cj = (ei+bdi[dr])%N, (ej+bdj[dr])%M
         if arr[i][j]<=0:    continue # 부서진 포탑
         arr[ci][cj] = max(0, arr[ci][cj]-arr[si][sj]//2)
         fset.add((ci,cj))
