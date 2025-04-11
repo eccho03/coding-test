@@ -35,10 +35,7 @@ def bfs(si,sj,ei,ej):
 
         # 네방향, 미방문, 조건: > 0
         for dr in range(4): # 우 하 좌 상
-            ni,nj = ci+di[dr], cj+dj[dr]
-            if ni<0 or ni>=N or nj<0 or nj>=M:
-                dr=(dr+2)%4
-                ni,nj = ci+di[dr], cj+dj[dr]
+            ni,nj = (ci+di[dr])%N, (cj+dj[dr])%M 
             if arr[ni][nj] <= 0 or len(v[ni][nj])!=0:
                 continue  # 부서진 포탑인 경우 패스
 
