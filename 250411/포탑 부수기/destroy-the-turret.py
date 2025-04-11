@@ -50,7 +50,7 @@ def bomb(si,sj,ei,ej):
     arr[ei][ej] = max(0, arr[ei][ej]-arr[si][sj])
     for dr in range(8):
         ci,cj = (ei+bdi[dr])%N, (ej+bdj[dr])%M
-        if arr[i][j]<=0:    continue # 부서진 포탑
+        if arr[ci][cj]<=0:    continue # 부서진 포탑
         arr[ci][cj] = max(0, arr[ci][cj]-arr[si][sj]//2)
         fset.add((ci,cj))
 
