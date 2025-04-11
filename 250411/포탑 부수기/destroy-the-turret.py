@@ -1,3 +1,6 @@
+import sys
+sys.stdin = open('input.txt','r')
+
 N, M, K = map(int, input().split())
 arr = [list(map(int, input().split())) for _ in range(N)]
 turn = [[0] * M for _ in range(N)]  # 공격한 턴수를 기록(최근공격 체크)
@@ -33,14 +36,15 @@ def bfs(si,sj,ei,ej):
         # 네방향, 미방문, 조건: > 0
         for dr in range(4): # 우 하 좌 상
             ni,nj = ci+di[dr], cj+dj[dr]
-            if ni<0 or ni>=N or nj<0 or nj>=M: # 가장자리인 경우 반대편으로 나옴
-                dr = (dr+2)%4
-                ni, nj = ci + di[dr], cj + dj[dr]
-            if arr[ni][nj] <= 0:  continue  # 부서진 포탑인 경우 패스
+            if ni < 0: ni = N - 1
+            if ni >= N: ni = 0
+            if nj < 0: nj = M - 1
+            if nj >= M: nj = 0
+            if arr[ni][nj] <= 0 or len(v[ni][nj])!=0:
+                continue  # 부서진 포탑인 경우 패스
 
-            if len(v[ni][nj])==0:
-                q.append((ni,nj))
-                v[ni][nj]=(ci,cj)
+            q.append((ni,nj))
+            v[ni][nj]=(ci,cj)
     return False
 
 def bomb(si,sj,ei,ej):
@@ -50,6 +54,7 @@ def bomb(si,sj,ei,ej):
     arr[ei][ej] = max(0, arr[ei][ej]-arr[si][sj])
     for dr in range(8):
         ci,cj = (ei+bdi[dr])%N, (ej+bdj[dr])%M
+        if (ci,cj)==(si,sj):    continue
         if arr[ci][cj]<=0:    continue # 부서진 포탑
         arr[ci][cj] = max(0, arr[ci][cj]-arr[si][sj]//2)
         fset.add((ci,cj))
