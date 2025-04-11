@@ -1,6 +1,3 @@
-import sys
-sys.stdin = open('input.txt','r')
-
 N, M, K = map(int, input().split())
 arr = [list(map(int, input().split())) for _ in range(N)]
 turn = [[0] * M for _ in range(N)]  # 공격한 턴수를 기록(최근공격 체크)
@@ -35,10 +32,7 @@ def bfs(si,sj,ei,ej):
 
         # 네방향, 미방문, 조건: > 0
         for dr in range(4): # 우 하 좌 상
-            ni,nj = ci+di[dr], cj+dj[dr]
-            if ni<0 or ni>=N or nj<0 or nj>=M:
-                dr=(dr+2)%4
-                ni,nj = ci+di[dr], cj+dj[dr]
+            ni,nj = (ci+di[dr])%N, (cj+dj[dr])%M
             if arr[ni][nj] <= 0 or len(v[ni][nj])!=0:
                 continue  # 부서진 포탑인 경우 패스
 
@@ -50,12 +44,10 @@ def bomb(si,sj,ei,ej):
     bdi = [0, 1, 0, -1, -1, -1, 1, 1]
     bdj = [1, 0, -1, 0, -1, 1, -1, 1]
 
-    arr[ei][ej] = max(0, arr[ei][ej]-arr[si][sj])
     for dr in range(8):
         ci,cj = (ei+bdi[dr])%N, (ej+bdj[dr])%M
         if (ci,cj)==(si,sj):    continue
         if arr[ci][cj]<=0:    continue # 부서진 포탑
-        arr[ci][cj] = max(0, arr[ci][cj]-arr[si][sj]//2)
         fset.add((ci,cj))
 
 for T in range(1, K+1): # K턴 반복
@@ -91,14 +83,13 @@ for T in range(1, K+1): # K턴 반복
     # [3] 레이저 공격
     if bfs(si,sj,ei,ej)==False:
         bomb(si,sj,ei,ej)
-    else:
-        for i,j in fset:
-            if (i,j)==(ei,ej):
-                arr[i][j]=max(0, arr[i][j]-arr[si][sj])
-            elif (i,j)==(si,sj):
-                pass
-            else:
-                arr[i][j] = max(0, arr[i][j] - arr[si][sj]//2)
+    for i,j in fset:
+        if (i,j)==(ei,ej):
+            arr[i][j]=max(0, arr[i][j]-arr[si][sj])
+        elif (i,j)==(si,sj):
+            pass
+        else:
+            arr[i][j] = max(0, arr[i][j] - arr[si][sj]//2)
 
     # print(fset)
     # print(arr)
