@@ -1,29 +1,23 @@
-from collections import deque
 def solution(tickets):
     answer = []
     tickets.sort()
+    v = [0] * len(tickets)
     
-    def bfs(start, sroute, used):
-        q = deque()
-        q.append((start, sroute, used))
+    def dfs(cur, route):
         
-        while q:
-            cur, croute, cused = q.popleft()
+        for i in range(len(tickets)):
+            depart, dest = tickets[i]
             
-            if len(cused)==len(tickets):
-                answer.append(croute)
-                continue
+            if len(route)==len(tickets)+1:
+                answer.append(route)
+                return
             
-            for idx in range(len(tickets)):
-                snode, enode = tickets[idx]
-                #print(snode, enode)
-                
-                if snode == cur and idx not in cused:
-                    q.append((enode, croute+[enode], cused+[idx]))
+            if depart==cur and v[i]==0:
+                v[i]=1
+                dfs(dest, route+[dest])
+                v[i]=0
             
-        return []
     
-    bfs("ICN", ["ICN"], [])
+    dfs("ICN",["ICN"])
     answer.sort()
-            
     return answer[0]
