@@ -1,23 +1,3 @@
-# N=int(input())
-# people = [list(map(int, input().split())) for _ in range(N)]
-# print(people)
-#
-# people.sort(key=lambda x:(x[0],x[1]))
-# print(people)
-#
-# ans = 0
-#
-# for idx in range(1,N):
-#     prev1, prev2 = people[idx-1]
-#     cur1, cur2 = people[idx]
-#
-#     if cur2>prev2:
-#         pass
-#     else: # cur2<prev2
-#         print(idx)
-#         ans+=1
-# print(ans)
-
 s = str(input())
 
 sidx, eidx,tidx = -1,-1, -1
