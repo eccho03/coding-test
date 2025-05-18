@@ -16,20 +16,30 @@ def check_diff():
     return target
 
 def find_same(arr):
-    mx = 1
+    mx_cnt = 0
     for i in range(N):
-        row_cnt = col_cnt = 1
-        for j in range(1, N):
-            if arr[i][j] == arr[i][j-1]:
-                row_cnt += 1
-            else:
-                row_cnt = 1
-            if arr[j][i] == arr[j-1][i]:
-                col_cnt += 1
-            else:
-                col_cnt = 1
-            mx = max(mx, row_cnt, col_cnt)
-    return mx
+
+        for j in range(N):
+            # 연속 부분 - 행 카운트
+            ni,nj = i,j
+            row_cnt, col_cnt = 0,0
+
+            while True:
+                nj+=1
+                row_cnt+=1
+                if nj>=N or arr[i][j]!=arr[i][nj]:
+                    break
+
+            ni,nj = i,j
+            while True:
+                ni+=1
+                col_cnt+=1
+                if ni >= N or arr[i][j] != arr[ni][j]:
+                    break
+            #print(f'{i}, {j}: {row_cnt, col_cnt}')
+            mx_cnt = max(mx_cnt, max(row_cnt,col_cnt))
+
+    return mx_cnt
 
 def myarr(arr):
     for i in range(N):
