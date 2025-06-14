@@ -1,11 +1,3 @@
-def state_light(time, r, g):
-    # 빨간불
-    if time % (r+g) <= r:
-        return True
-
-    # 초록불
-    return False
-
 N, L = map(int, input().split())
 info = [list(map(int, input().split())) for _ in range(N)]
 # print(info)
@@ -21,14 +13,10 @@ while loc < L:
 
         # 해당 신호등 도착
         if d==loc:
-            # 초록불
-            if not state_light(time, r, g):
-                loc += 1
-                time += 1
-            else:
+            # 빨간불 일 때만
+            if time % (r+g) <= r:
                 time += r - time%(r+g)
             idx += 1
-            continue
     loc += 1
     time += 1
 
