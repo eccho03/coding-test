@@ -2,7 +2,6 @@ N = int(input())
 arr = [list(map(int, input().split())) for _ in range(N)]
 # print(arr)
 
-from collections import deque
 def find_target(ti, tj, v):
     lst = []
     v[ti][tj]=1
@@ -11,32 +10,22 @@ def find_target(ti, tj, v):
     for di, dj in ((-1, 0), (1, 0), (0, -1), (0, 1)):
         ni, nj = ti+di, tj+dj
 
-        if is_valid(ni, nj):
+        if 0<=ni<N and 0<=nj<N and v[ni][nj]==0:
             v[ni][nj]=1
             lst.append((ni, nj))
 
     return lst
 
-def is_valid(ti, tj):
-    if 0<=ti<N and 0<=tj<N and v[ti][tj]==0:
-        return True
-    return False
-
 def cal_cost(lst):
-    n = len(lst)
     flower_cost = 0
 
-    for i in range(n):
-        ci, cj = lst[i]
+    for ci, cj in lst:
         flower_cost += arr[ci][cj]
 
     return flower_cost
 
 def clear_flower(lst):
-    n = len(lst)
-
-    for i in range(n):
-        ci, cj = lst[i]
+    for ci, cj in lst:
         v[ci][cj]=0
 
 def dfs(cur_cost, cnt):
@@ -58,7 +47,6 @@ def dfs(cur_cost, cnt):
 
 
 v = [[0]*N for _ in range(N)]
-
 cost = float('inf')
 
 ans = dfs(0, 0)
