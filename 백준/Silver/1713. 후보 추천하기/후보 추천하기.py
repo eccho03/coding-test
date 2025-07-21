@@ -1,45 +1,40 @@
+def is_full(pic):
+    return len(pic)>=N
+
+def delete_pic(reco):
+    mn_reco = 1001
+    #print(reco)
+    for re in reco:
+        if 1<=re<mn_reco:
+            mn_reco = re
+
+    for pic in pictures:
+        if reco[pic] == mn_reco:
+            pictures.remove(pic)
+            recommends[pic]=0
+            return
+
 N = int(input())
-pic = dict() # 사진틀
-total = int(input())
-order = list(map(int, input().split()))
+recom = int(input())
+orders = list(map(int, input().split()))
 
-for num in order:
+pictures = []
+recommends = [0]*(100+1)
 
-    # 추천받은 학생 사진이 사진틀에 게시
+for student in orders:
+    if student in pictures:
+        recommends[student]+=1
+        #print(pictures)
+        continue
 
-    # 비어있는 사진틀 있을 경우
-    if len(pic) < N:
-        for n, cnt in pic.items():
-            if n==num:
-                pic[num] = cnt+1
-                break
-        else:
-            pic[num] = 1
-
-    # 비어있는 사진틀이 없는 경우
+    if not is_full(pictures):
+        pictures.append(student) # 추천받은 학생 게시
     else:
+        delete_pic(recommends)
+        pictures.append(student)
 
-        # 만약 이미 목록에 있으면
-        for n, cnt in pic.items():
-            if n==num:
-                pic[num] = cnt+1
-                break
-        else:
-            # 아니면 하나 빼고 추가
-            min_recom = min(pic.values())
+    recommends[student]+=1
+    #print(pictures)
 
-            for n, cnt in pic.items():
-                if cnt==min_recom:
-                    pic.pop(n)
-                    break
-            pic[num] = 1
-
-
-    # print(num,": ",pic)
-
-ans = []
-for i in pic.keys():
-    ans.append(i)
-
-ans.sort()
-print(*ans)
+pictures.sort()
+print(*pictures)
