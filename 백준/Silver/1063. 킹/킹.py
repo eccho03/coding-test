@@ -1,58 +1,55 @@
-def move(op, i, j):
-    if op=='R':
-        return i+1, j
-    elif op=='L':
-        return i-1, j
-    elif op=='B':
-        return i, j-1
-    elif op=='T':
-        return i, j+1
-    elif op=='RT':
-        return i+1, j+1
-    elif op=='LT':
-        return i-1, j+1
-    elif op=='RB':
-        return i+1, j-1
-    elif op=='LB':
-        return i-1, j-1
+def oper_move(order, ci, cj):
+    if order == 'R':
+        ni, nj = ci+1, cj
+    elif order == 'L':
+        ni, nj = ci-1, cj
+    elif order == 'B':
+        ni, nj = ci, cj-1
+    elif order == 'T':
+        ni, nj = ci, cj+1
+    elif order == 'RT':
+        ni, nj = ci+1, cj+1
+    elif order == 'LT':
+        ni, nj = ci-1, cj+1
+    elif order == 'RB':
+        ni, nj = ci+1, cj-1
+    elif order == 'LB':
+        ni, nj = ci-1, cj-1
     else:
-        return i, j
+        ni, nj = -1, -1 # 올바르지 않은 명령
 
+    return ni, nj
 
 col = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6, 'H': 7}
-change = {0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'E', 5: 'F', 6: 'G', 7: 'H'}
+col_rev = {0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'E', 5: 'F', 6: 'G', 7: 'H'}
 
-king, stone, move_cnt = input().split()
-move_cnt = int(move_cnt)
-info = [input() for  _ in range(move_cnt)]
+king, stone, N = map(str, input().split())
+N = int(N)
+M = 8
+ways = [input().rstrip() for _ in range(N)]
 
-# print(king[0], king[1])
+ki, kj = col[king[0]], int(king[1])-1
+si, sj = col[stone[0]], int(stone[1])-1
+ai, aj = 0, 0
+sai, saj = 0, 0
+# print(ki,kj)
+# print(si,sj)
 
-ki, kj = col[king[0]], (int(king[1])-1) # 킹 좌표
-ti, tj = col[stone[0]], (int(stone[1])-1) # 돌 좌표
+board = [[0]*M for _ in range(M)]
 
-for operation in info:
-    nki, nkj = move(operation, ki, kj)
-
-    if nki<0 or nki>=8 or nkj<0 or nkj>=8:
+for way in ways:
+    nki, nkj = oper_move(way, ki, kj)
+    if nki<0 or nki>=M or nkj<0 or nkj>=M:
         continue
 
-    # print("왕 위치: ", ki, kj)
-
-    if (nki, nkj)==(ti, tj):
-        nti, ntj = move(operation, ti, tj)
-
-        # print("현재 돌의 위치: ", ti, tj)
-
-        if nti<0 or nti>=8 or ntj<0 or ntj>=8:
+    if (nki, nkj) == (si, sj):
+        nsi, nsj = oper_move(way, si, sj)
+        if nsi<0 or nsi>=M or nsj<0 or nsj>=M:
             continue
-        ti,tj = nti, ntj
-    ki,kj = nki, nkj
+        si, sj = nsi, nsj
 
-    # print("===현재 왕, 돌의 위치===")
-    # print(operation, ": ", ki, kj, "/", ti, tj)
-    # print("=================")
-    # print(f'{change[ki]}{kj+1} {change[ti]}{tj+1}')
+    ki, kj = nki, nkj
 
-print(f'{change[ki]}{kj+1}')
-print(f'{change[ti]}{tj+1}')
+# print(f'king: {col_rev[ki]}{kj+1} stone: {col_rev[si]}{sj+1}')
+print(f'{col_rev[ki]}{kj+1}')
+print(f'{col_rev[si]}{sj+1}')
