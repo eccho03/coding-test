@@ -1,25 +1,19 @@
 N, M = map(int, input().split())
 info = [list(map(int, input().split())) for _ in range(M)]
-INF = 10**8
-mn_set = INF
-mn_one = INF
 
-for i in range(M):
-    s1, s2 = info[i]
-    # print(s1, s2)
-    if s1 < mn_set:
-        mn_set = s1
-    if s2 < mn_one:
-        mn_one = s2
+info.sort(key=lambda x: x[0])
+mn_set = info[0][0]
+info.sort(key=lambda x: x[1])
+mn_one = info[0][1]
 
-# print(mn_one, mn_set)
-mn_money = INF
+# print(mn_set, mn_one)
 
-for one in range(N+1):
-    for set in range(N+1):
-        amount = one + set*6
-        if amount < N:  continue
-        mn_money = min(mn_money, mn_one*one + mn_set*set)
-
-print(mn_money)
-
+# 세트가 더 싼 경우
+if mn_one > mn_set//6:
+    if mn_set < (N%6)*mn_one:
+        print(mn_set*(N//6+1))
+    else:
+        print(mn_set*(N//6) + mn_one*(N%6))
+# 낱개가 더 싼 경우
+else:
+    print(mn_one*N)
