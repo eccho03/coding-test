@@ -1,22 +1,20 @@
-from collections import deque
+import heapq
 def topology_sort():
     result = []
-    q = deque()
+    pq = []
 
     for i in range(1, N+1):
         if indegree[i]==0:
-            q.append(i)
+            heapq.heappush(pq, i)
 
-    while q:
-        q = deque(q)
-        cur = q.popleft()
+    while pq:
+        cur = heapq.heappop(pq)
         result.append(cur)
         for i in graph[cur]:
             indegree[i]-=1
             if indegree[i]==0:
-                q.append(i)
+                heapq.heappush(pq, i)
 
-        q = sorted(q)
 
     for i in result:
         print(i, end=" ")
