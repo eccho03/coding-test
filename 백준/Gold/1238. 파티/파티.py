@@ -1,42 +1,43 @@
 import heapq
-from collections import deque, defaultdict
 
+def dijkstra(start):
+    pq = []
+    INF = float('inf')
+    dists = [INF]*(N+1)
 
-def dijkstra(start, end):
-    dist = {node: float('inf') for node in graph}
-    dist[start] = 0 # 시작 노드 ~ 자기 자신
-    pq = [(0, start)]
+    heapq.heappush(pq, (0, start))
+    dists[start]=0
 
     while pq:
         cur_dis, cur_node = heapq.heappop(pq)
-        if cur_node == end:
-            return dist
 
-        # 이미 처리된 노드 무시
-        if cur_dis > dist[cur_node]:
+        if cur_dis > dists[cur_node]:
             continue
 
-        for nxt_node, nxt_dis in graph[cur_node].items():
-            distance = cur_dis + nxt_dis
+        for nxt_dis, nxt_node in graph[cur_node]:
 
-            if distance < dist[nxt_node]:
-                dist[nxt_node] = distance
-                heapq.heappush(pq, (distance, nxt_node))
+            if nxt_dis+cur_dis < dists[nxt_node]:
+                heapq.heappush(pq, (nxt_dis+cur_dis, nxt_node))
+                dists[nxt_node] = nxt_dis+cur_dis
 
-    return dist
+    return dists
 
 N, M, X = map(int, input().split())
-street = [list(map(int, input().split())) for _ in range(M)]
+info = [list(map(int, input().split())) for _ in range(M)]
+graph = [[] for _ in range(N+1)]
 
-graph = defaultdict(dict)
-for start, end, time in street:
-    graph[start][end] = time
+for start, end, time in info:
+    graph[start].append([time, end]) # 도로는 단방향
 
-#print(graph)
-mx_time = -1
+# print(graph)
+
+dist_lst = [0]*(N+1)
+
+X_to_i = dijkstra(X)
 for i in range(1, N+1):
-    start = dijkstra(i, X)
-    end = dijkstra(X, i)
-    if mx_time < (start[X]+end[i]):
-        mx_time = start[X]+end[i]
-print(mx_time)
+    go_dist = dijkstra(i)   # i번 -> X번
+    back_dist = X_to_i[i]
+
+    dist_lst[i] = go_dist[X] + back_dist
+
+print(max(dist_lst[1:]))
