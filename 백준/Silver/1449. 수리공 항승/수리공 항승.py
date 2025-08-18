@@ -2,13 +2,15 @@ N, L = map(int, input().split())
 locations = list(map(int, input().split()))
 locations.sort()
 
-ans = 0 # 테이프 개수
-cur_loc = locations[0]
-for i in range(1,N):
-    if cur_loc+L > locations[i]:
-        pass
-    else:
-        ans+=1
-        cur_loc = locations[i]
+idx=0
+cnt=0
 
-print(ans+1)
+for loc in locations:
+
+    if idx>=loc: #이미 그 전 좌표로 인해 커버하고 있음
+        continue
+
+    cnt+=1
+    idx = loc-0.5+L
+
+print(cnt)
