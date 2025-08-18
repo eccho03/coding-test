@@ -1,39 +1,37 @@
 import heapq
-from collections import defaultdict
-def dijkstra(start, D):
-    dist = {i: float('inf') for i in range(D+1)}
-    dist[start] = 0
+def dijkstra(start):
+    pq = []
+    INF = float('inf')
+    dists = [INF]*(D+1)
 
-    pq = [(0, start)]
+    heapq.heappush(pq, (0, start))
+    dists[start]=0
 
     while pq:
         cur_dis, cur_node = heapq.heappop(pq)
 
-        if cur_dis > dist[cur_node]:
+        if cur_dis>dists[cur_node] or dists[cur_node]>D:
             continue
 
-        for nxt_node, nxt_dis in graph[cur_node].items():
-            distance = cur_dis + nxt_dis
-
-            if distance < dist[nxt_node]:
-                dist[nxt_node] = distance
-                heapq.heappush(pq, (distance, nxt_node))
-    return dist
+        for nxt_dis, nxt_node in graph[cur_node]:
+            if nxt_dis+cur_dis < dists[nxt_node]:
+                heapq.heappush(pq, (nxt_dis+cur_dis, nxt_node))
+                dists[nxt_node] = nxt_dis+cur_dis
+    return dists
 
 N, D = map(int, input().split())
-drive =[list(map(int, input().split())) for _ in range(N)]
-graph = defaultdict(dict)
 
-# 지름길 아닌 일반길
+ways = [list(map(int, input().split())) for _ in range(N)]
+graph = [[] for _ in range(D+1)]
+
+for start, end, dist in ways:
+    if end>D:   continue
+    graph[start].append([dist, end])
+
 for i in range(D):
-    graph[i][i+1]=1
+    graph[i].append([1, i+1])
 
-for start, end, l in drive:
-    if end <= D:
-        if end not in graph[start] or l <  graph[start][end]:
-            graph[start][end] = l
+# print(graph)
 
-#print(graph)
-
-ans = dijkstra(0, D)
-print(ans[D])
+dist = dijkstra(0)
+print(dist[D])
