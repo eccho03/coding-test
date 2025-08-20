@@ -1,10 +1,17 @@
 def solution(ingredient):
     answer = 0
+    
     stack = []
     
-    for item in ingredient:
-        stack.append(item)
-        if stack[-4:] == [1,2,3,1]:
-            del stack[-4:]
-            answer+=1
+    for num in ingredient:
+        stack.append(num)
+        if len(stack)>=4:
+            if (stack[-4],stack[-3],stack[-2],stack[-1])==(1,2,3,1):
+                stack.pop(-1)
+                stack.pop(-1)
+                stack.pop(-1)
+                stack.pop(-1)
+                answer+=1
+
+    
     return answer
