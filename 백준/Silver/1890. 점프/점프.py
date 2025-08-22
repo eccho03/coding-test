@@ -6,9 +6,6 @@ def dfs(ci, cj):
         return v[ci][cj]
 
     v[ci][cj]=0
-    dist = arr[ci][cj]
-    if dist==0:
-        return 0
     for di,dj in directions:
         ni,nj = ci+di*arr[ci][cj], cj+dj*arr[ci][cj]
         if 0<=ni<N and 0<=nj<N:
