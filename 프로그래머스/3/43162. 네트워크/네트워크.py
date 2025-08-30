@@ -1,33 +1,33 @@
-from collections import deque
 def solution(n, computers):
     answer = 0
     
-    graph = [[] * (n+1) for _ in range((n+1))]
+    def find(x):
+        if parent[x]!=x:
+            parent[x]=find(parent[x])
+        return parent[x]
     
-    for i in range(len(computers)):
+    def union(a,b):
+        a=find(a)
+        b=find(b)
+        if a<b:
+            parent[b]=a
+        else:
+            parent[a]=b
+    
+    parent = [0]*(n)
+    
+    for i in range(n):
+        parent[i]=i
+    
+    for i in range(n):
         for j in range(n):
+            if i==j:continue
             if computers[i][j]==1:
-                graph[i+1].append(j+1)
-    #print(graph)
+                union(i, j)
     
-    v = [0] * (n+1)
+    ans_arr=set()
+    for i in range(n):
+        root = find(i)
+        ans_arr.add(root)
     
-    def bfs(start):
-        q = deque([start])
-        v[start] = True
-
-        while q:
-            cur = q.popleft()
-            #print(cur, end=' ')
-            for i in graph[cur]:
-                if not v[i]:
-                    q.append(i)
-                    v[i] = True
-                    
-    
-    for i in range(1,n+1):
-        if v[i]==0:
-            bfs(i)
-            answer+=1
-        
-    return answer
+    return len(ans_arr)
