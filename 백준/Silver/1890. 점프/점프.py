@@ -1,24 +1,20 @@
-def dfs(ci, cj):
-    global cnt
-    if (ci,cj)==(ei,ej):
-        return 1
-    if v[ci][cj]!=-1:
-        return v[ci][cj]
-
-    v[ci][cj]=0
-    for di,dj in directions:
-        ni,nj = ci+di*arr[ci][cj], cj+dj*arr[ci][cj]
-        if 0<=ni<N and 0<=nj<N:
-            v[ci][cj] += dfs(ni,nj)
-    return v[ci][cj]
-
-
 N = int(input())
 arr = [list(map(int, input().split())) for _ in range(N)]
 
-si,sj, ei,ej = 0,0, N-1,N-1
+dp = [[0]*N for _ in range(N)]
+dp[0][0]=1
 
-directions = [(1,0),(0,1)] # 하, 우
-v = [[-1]*N for _ in range(N)]
-ans = dfs(si, sj)
-print(ans)
+for i in range(N):
+    for j in range(N):
+        if dp[i][j]==0: continue
+        if arr[i][j] == 0: continue
+
+        ni,nj = i+arr[i][j], j+arr[i][j]
+        if ni < N:
+            dp[ni][j] += dp[i][j]
+
+        if nj < N:
+            dp[i][nj] += dp[i][j]
+
+
+print(dp[N-1][N-1])
