@@ -8,10 +8,8 @@ dp = [0]*(N+2)
 # print(days)
 
 for i in range(1,N+1):
-    t,p = days[i]
-
     dp[i] = max(dp[i],dp[i-1])
-    if i+t<=N+1:
-        dp[i+t] = max(dp[i+t], dp[i]+p)
+    if i+days[i][0] >N+1: continue
+    dp[i+days[i][0]] = max(dp[i+days[i][0]], dp[i]+days[i][1])
 
 print(max(dp))
