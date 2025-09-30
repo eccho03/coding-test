@@ -1,21 +1,19 @@
 T, W = map(int, input().split())
-nums = [int(input()) for _ in range(T)]
-
+arr = [0] + [int(input()) for _ in range(T)]
 dp = [[0]*(W+1) for _ in range(T+1)]
-# dp[T][W] 시간/이동횟수
 
-for t in range(1, T+1):
-    if nums[t-1]==1:
-        dp[t][0] = dp[t-1][0]+1
+for i in range(1, T+1):
+    # 자두나무는 초기에 1번 아래에 위치
+    if arr[i]==1:
+        dp[i][0] = dp[i-1][0]+1
     else:
-        dp[t][0] = dp[t-1][0]
+        dp[i][0] = dp[i-1][0]
 
-    for w in range(1, W+1):
-        if nums[t-1]==2 and w%2==1: # 이동 o
-            dp[t][w] = max(dp[t-1][w-1], dp[t-1][w])+1
-        elif nums[t-1]==1 and w%2==0: # 이동 o
-            dp[t][w] = max(dp[t-1][w-1], dp[t-1][w])+1
-        else:
-            dp[t][w] = max(dp[t-1][w-1], dp[t-1][w])
+    for j in range(1, W+1):
+
+        cur_pos = 2 if j%2==1 else 1
+        eat_cnt = 1 if arr[i]==cur_pos else 0
+        dp[i][j] = max(dp[i-1][j], dp[i-1][j-1])+eat_cnt
+
 
 print(max(dp[T]))
