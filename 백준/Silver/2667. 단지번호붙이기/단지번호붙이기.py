@@ -1,44 +1,39 @@
-house = []
-house_cnt = 0
+N = int(input())
+arr = [list(str(input())) for _ in range(N)]
 
-def dfs(x0, y0):
-    global house
-    global house_cnt
+from collections import deque
+def bfs(si, sj, v):
+    q = deque()
+    house_cnt = 0
 
-    if x0 < 0 or y0 < 0 or x0 >= n or y0 >= n or graph[x0][y0] != 1:
-        return
-    visited[x0][y0] = True
+    q.append((si, sj))
+    v[si][sj]=1
     house_cnt += 1
 
-    dx = [-1, 1, 0, 0]
-    dy = [0, 0, -1, 1]
+    while q:
+        ci, cj = q.popleft()
 
-    for i in range(4):
-        nx = x0 + dx[i]
-        ny = y0 + dy[i]
+        for di, dj in ((-1,0),(1,0),(0,-1),(0,1)):
+            ni, nj = ci+di, cj+dj
 
-        if nx < 0 or ny < 0 or nx >= n or ny >= n or graph[nx][ny] != 1:
-            continue
-        if not visited[nx][ny]:
-            dfs(nx, ny)
+            if 0<=ni<N and 0<=nj<N and v[ni][nj]==0 and arr[ni][nj]=='1':
+                q.append((ni, nj))
+                v[ni][nj]=1
+                house_cnt += 1
+
     return house_cnt
 
-n = int(input())
-total = 0
-graph = []
-visited = [[False] * n for _ in range(n)]
-for _ in range(n):
-    graph.append(list(map(int, input())))
+v = [[0]*N for _ in range(N)]
+total_cnt = 0
+ans = []
+for i in range(N):
+    for j in range(N):
+        if arr[i][j]=='1' and v[i][j]==0:
+            house_cnt = bfs(i, j , v)
+            total_cnt += 1
+            ans.append(house_cnt)
 
-for i in range(n):
-    for j in range(n):
-        house_cnt = 0
-        if graph[i][j] == 1 and not visited[i][j]:
-            total += 1
-            ans = dfs(i, j)
-            house.append(ans)
-
-print(total)
-house.sort()
-for h in house:
-    print(h)
+print(total_cnt)
+ans.sort()
+for a in ans:
+    print(a)
