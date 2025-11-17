@@ -6,6 +6,7 @@ This is a auto push repository for Baekjoon Online Judge created with [BaekjoonH
 ## Math
 |  |
 | ------- |
+| [0009-palindrome-number](https://github.com/eccho03/coding-test/tree/master/0009-palindrome-number) |
 | [0062-unique-paths](https://github.com/eccho03/coding-test/tree/master/0062-unique-paths) |
 ## Dynamic Programming
 |  |
