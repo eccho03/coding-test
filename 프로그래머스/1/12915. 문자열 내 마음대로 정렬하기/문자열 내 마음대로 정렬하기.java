@@ -1,21 +1,18 @@
 import java.util.*;
-
 class Solution {
     public String[] solution(String[] strings, int n) {
-        String[] answer = new String[strings.length];
+        List<String> answer = new ArrayList<>();
         
-        Arrays.sort(strings, new Comparator<String>() {
-            @Override
-            public int compare(String s1, String s2) {
-                if (s1.charAt(n)-s2.charAt(n)!=0) return s1.charAt(n)-s2.charAt(n);
-                else return s1.compareTo(s2);
+        Arrays.sort(strings, (s1, s2) -> {
+            if (s1.charAt(n)==s2.charAt(n)) return s1.compareTo(s2);
+            else {
+                return s1.charAt(n)-s2.charAt(n);
             }
         });
         
-        for (int i=0; i<strings.length; i++) {
-            answer[i] = strings[i];
+        for (String st: strings) {
+            answer.add(st);
         }
-        
-        return answer;
+        return answer.toArray(new String[0]);
     }
 }
