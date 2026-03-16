@@ -1,4 +1,0 @@
-select BOOK_ID, left(PUBLISHED_DATE, 10) as PUBLISHED_DATE
-from BOOK
-where CATEGORY='인문' and left(PUBLISHED_DATE,4)='2021'
-order by PUBLISHED_DATE asc;
