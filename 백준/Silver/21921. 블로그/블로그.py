@@ -1,24 +1,28 @@
 N, X = map(int, input().split())
-days = list(map(int, input().split()))
+amounts = list(map(int, input().split()))
 
-sum_days = [0]*(N+1)
+num = amounts[:X]
+# print(num)
+# print(sum(num))
+ans = sum(num)
+answer = [ans]
+for i in range(X, N):
+    prev = amounts[i-X]
+    ans -= prev
+    new = amounts[i]
+    ans += new
 
-for i in range(N):
-    sum_days[i+1] = sum_days[i] + days[i]
-# print(sum_days)
+    # print(ans)
+    answer.append(ans)
 
-mx_visit = 0
-for i in range(0,N-X+1):
-    # print(sum_days[X+i]-sum_days[i])
-    mx_visit = max(mx_visit, sum_days[X+i]-sum_days[i])
-
+mx_ans = max(answer)
 cnt = 0
-for i in range(0,N-X+1):
-   if mx_visit == sum_days[X+i]-sum_days[i]:
-       cnt += 1
+for a in answer:
+    if a==mx_ans:
+        cnt+=1
 
-if mx_visit == 0:
+if mx_ans==0:
     print("SAD")
 else:
-    print(mx_visit)
+    print(mx_ans)
     print(cnt)
