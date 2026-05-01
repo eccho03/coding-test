@@ -3,15 +3,15 @@ def solution(ingredient):
     
     stack = []
     
-    for num in ingredient:
-        stack.append(num)
-        if len(stack)>=4:
-            if (stack[-4],stack[-3],stack[-2],stack[-1])==(1,2,3,1):
-                stack.pop(-1)
-                stack.pop(-1)
-                stack.pop(-1)
-                stack.pop(-1)
-                answer+=1
-
+    for ingre in ingredient:
+        stack.append(ingre)
+        
+        if len(stack)<4: continue
+        if stack[-4]==1 and stack[-3]==2 and stack[-2]==3 and stack[-1]==1:
+            stack.pop()
+            stack.pop()
+            stack.pop()
+            stack.pop()
+            answer+=1
     
     return answer
