@@ -1,60 +1,59 @@
 import java.util.*;
 
 class Solution {
-    static int N;
-    static int M;
-    
     static class Point {
         int x;
         int y;
-        int way;
+        int dist;
         
-        Point(int x, int y, int way) {
-            this.x=x;
-            this.y=y;
-            this.way=way;
+        Point(int x, int y, int dist) {
+            this.x = x;
+            this.y = y;
+            this.dist = dist;
         }
-    }
-    public int solution(int[][] maps) {
-        int answer = 0;
-        N = maps.length;
-        M = maps[0].length;
-        
-        answer = bfs(maps);
-        
-        
-        return answer;
     }
     
-    static int bfs(int[][] maps) {
-        int[] dx = {0,0,1,-1};
-        int[] dy = {1,-1,0,0};
+    static int[] dx = {-1,1,0,0};
+    static int[] dy = {0,0,-1,1};
+    
+    int bfs(int[][] maps, int N, int M) {
+        Queue<Point> q = new LinkedList<>();
+        boolean[][] visited = new boolean[N][M];
         
-        Queue<Point> q = new LinkedList<Point>();
-        boolean[][] v = new boolean[N][M];
+        q.offer(new Point(N-1, M-1, 1));
+        visited[N-1][M-1] = true; // 항상 똑같은 위치에서 시작
         
-        q.add(new Point(0, 0, 1));
-        v[0][0]=true;
+        boolean flag = false;
         
         while (!q.isEmpty()) {
-            Point cPoint = q.poll();
-            if (cPoint.x==N-1 && cPoint.y==M-1) {
-                return cPoint.way;
-            }
+            Point cur = q.poll();
+            if (cur.x==0 && cur.y==0) return cur.dist;
             
+            flag = false;
             for (int i=0; i<4; i++) {
-                int nx = cPoint.x + dx[i];
-                int ny = cPoint.y + dy[i];
+                int nx = cur.x+dx[i];
+                int ny = cur.y+dy[i];
                 
-                if (nx<0||nx>=N||ny<0||ny>=M) continue;
-                if (v[nx][ny]) continue;
+                if(nx<0||nx>=N||ny<0||ny>=M) continue;
+                if (visited[nx][ny]) continue;
                 if (maps[nx][ny]==0) continue;
                 
-                q.add(new Point(nx,ny,cPoint.way+1));
-                v[nx][ny]=true;
+                q.offer(new Point(nx, ny, cur.dist+1));
+                visited[nx][ny] = true;
+                flag = true;
             }
-          
-        }
+        } 
+        
         return -1;
+    }
+    
+    public int solution(int[][] maps) {
+        int answer = 0;
+        int N = maps.length;
+        int M = maps[0].length;
+        
+        answer = bfs(maps, N, M);
+        
+        return answer;
     }
 }
